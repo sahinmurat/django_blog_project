@@ -34,3 +34,23 @@ class Create(generics.CreateAPIView):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
     
+    
+@api_view(["GET", "PUT", "DELETE"])
+def student_get_update_delete(request, id):
+    post = get_object_or_404(Post, id=id)
+    if request.method == "GET":
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
+    if request.method == "PUT":
+        serializer = PostSerializer(post, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            data = {
+                "message": "Post updated succesfully!"
+            }
+            return Response(data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    if request.method == "DELETE":
+        post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    

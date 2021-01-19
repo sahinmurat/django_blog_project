@@ -8,5 +8,4 @@ from .utils import get_random_code
 @receiver(pre_save, sender=Post)
 def pre_save_create_slug(sender, instance, **kwargs):
     if not instance.slug:
-        instance.slug = slugify(
-            instance.title + " " + get_random_code())
+        instance.slug = slugify(instance.author.username + " " + instance.title) 
