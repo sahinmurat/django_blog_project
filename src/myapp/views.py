@@ -23,16 +23,16 @@ def post_list(request):
     elif request.method == 'POST':
         serializer = PostSerializer(data = request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(author=request.user)
             data = {
                 'message': 'it is created'
             }
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
     
-# class Create(generics.CreateAPIView):
-#     serializer_class = PostSerializer
-#     queryset = Post.objects.all()
+class Create(generics.CreateAPIView):
+    serializer_class = PostSerializer
+    queryset = Post.objects.all()
     
     
 @api_view(["GET","PUT", "DELETE"])
@@ -57,7 +57,7 @@ def post_get_update_delete(request, slug):
  
 @api_view(["GET","PUT", "DELETE"])   
 def like(request, slug):
-    if request.method == "PUT":
+    if request.method == "POST":
         obj = get_object_or_404(Post, slug=slug)
         like_qs = Like.objects.filter(user=request.user, post=obj)
         if like_qs:

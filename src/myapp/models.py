@@ -24,7 +24,7 @@ class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
     # image = models.ImageField(
-    #     upload_to=user_directory_path, default='django.jpg')  chARFIELD YA DA URL OLARAK KOYACAGIZ
+    #     upload_to=user_directory_path, default='django.jpg')  chARFIELD YA DA URL OLARAK KOYACAGIz
     category = models.ForeignKey(
         Category, on_delete=models.PROTECT, related_name="cats")
     publish_date = models.DateTimeField(auto_now_add=True)
