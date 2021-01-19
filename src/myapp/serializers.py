@@ -8,11 +8,11 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
         
 class PostSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(
-        view_name = 'list', #viewda belirttigimiz adres
-        lookup_field = 'id'
-    )
+    # url = serializers.HyperlinkedIdentityField(
+    #     view_name = 'detail', #viewda belirttigimiz adres
+    #     lookup_field = 'id'
+    # )
     
     class Meta:
         model = Post
-        fields = ('url', 'title','content', 'category','publish_date', 'last_updated', 'author')
+        fields = (  'id', 'title','content', 'category','publish_date', 'last_updated', 'author', 'slug')
