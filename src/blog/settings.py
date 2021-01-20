@@ -41,8 +41,9 @@ INSTALLED_APPS = [
     'myapp.apps.MyappConfig',
     'user.apps.UserConfig',
     'rest_framework',
-    'nested_admin',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'dj_rest_auth',
+    'nested_admin'
 ]
 
 MIDDLEWARE = [
