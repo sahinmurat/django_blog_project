@@ -31,9 +31,4 @@ class PostSerializer(serializers.ModelSerializer):
     #     read_only_fields = ['author', "create_date", "update_date","slug"]
         
         
-    #         {
-    #     "title": "upppqaa",
-    #     "content": "qaa",
-    #     "category": 1,
-    #     "author": "murat"
-    # }
+  
