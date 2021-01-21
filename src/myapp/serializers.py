@@ -19,11 +19,11 @@ class PostSerializer(serializers.ModelSerializer):
         fields = (  'id', 'title','content', 'category','publish_date', 'last_updated', 'author', 'slug','comment_count', 'view_count', 'like_count')
         read_only_fields = ['author', "publish_date", "last_updated","slug"]
         
-        def get_author(self,obj):
-            return obj.get_author_display()
+        # def get_author(self,obj):
+        #     return obj.get_author_display()
         
-        def get_category(self,obj):
-            return obj.get_category_display()
+        # def get_category(self,obj):
+        #     return obj.get_category_display()
         
         
     #     class BlogPostSerializer(serializers.ModelSerializer):

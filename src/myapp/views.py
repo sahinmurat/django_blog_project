@@ -7,14 +7,18 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from .models import Category,Post, Like
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from .serializers import PostSerializer
 from rest_framework import status
 from rest_framework import generics
+from django.contrib.auth.decorators import login_required
+from rest_framework.permissions import IsAuthenticated
 
 
-@csrf_exempt
+
+
 @api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
 def post_list(request):
     if request.method == 'GET':
         posts = Post.objects.all()
@@ -34,8 +38,9 @@ class Create(generics.CreateAPIView):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
     
-    
+@permission_classes([IsAuthenticated])
 @api_view(["GET","PUT", "DELETE"])
+# @login_required()
 def post_get_update_delete(request, slug):
     post = get_object_or_404(Post, slug=slug)
     if request.method == "GET":
@@ -56,6 +61,7 @@ def post_get_update_delete(request, slug):
  
  
 @api_view(["GET","PUT", "DELETE"])   
+# @login_required()
 def like(request, slug):
     if request.method == "POST":
         obj = get_object_or_404(Post, slug=slug)
