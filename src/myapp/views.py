@@ -13,17 +13,26 @@ from rest_framework import status
 from rest_framework import generics
 from django.contrib.auth.decorators import login_required
 from rest_framework.permissions import IsAuthenticated
-
-
+from rest_framework.pagination import PageNumberPagination
 
 
 @api_view(['GET','POST'])
 @permission_classes([IsAuthenticated])
 def post_list(request):
+    #  paginator = PageNumberPagination()
+    # paginator.page_size = 10
+    # person_objects = Person.objects.all()
+    # result_page = paginator.paginate_queryset(person_objects, request)
+    # serializer = PersonSerializer(result_page, many=True)
+    # return paginator.get_paginated_response(serializer.data)
+    paginator = PageNumberPagination()
+    paginator.page_size = 1
     if request.method == 'GET':
         posts = Post.objects.all()
-        serializer = PostSerializer(posts, many = True)
-        return Response(serializer.data)
+        result_page = paginator.paginate_queryset(posts, request)
+        serializer = PostSerializer(result_page, many = True)
+        # return Response(serializer.data)
+        return paginator.get_paginated_response(serializer.data)
     elif request.method == 'POST':
         serializer = PostSerializer(data = request.data)
         if serializer.is_valid():
@@ -34,13 +43,12 @@ def post_list(request):
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
     
-class Create(generics.CreateAPIView):
-    serializer_class = PostSerializer
-    queryset = Post.objects.all()
+# class Create(generics.CreateAPIView):
+#     serializer_class = PostSerializer
+#     queryset = Post.objects.all()
     
 @permission_classes([IsAuthenticated])
 @api_view(["GET","PUT", "DELETE"])
-# @login_required()
 def post_get_update_delete(request, slug):
     post = get_object_or_404(Post, slug=slug)
     if request.method == "GET":
@@ -61,7 +69,6 @@ def post_get_update_delete(request, slug):
  
  
 @api_view(["GET","PUT", "DELETE"])   
-# @login_required()
 def like(request, slug):
     if request.method == "POST":
         obj = get_object_or_404(Post, slug=slug)
