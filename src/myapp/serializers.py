@@ -16,7 +16,7 @@ class PostSerializer(serializers.ModelSerializer):
     category = serializers.SerializerMethodField
     class Meta:
         model = Post
-        fields = (  'id', 'title','content', 'category','publish_date', 'last_updated', 'author', 'slug','comment_count', 'view_count', 'like_count')
+        fields = (  'id', 'title','content', 'image','category','publish_date', 'last_updated', 'author', 'slug','comment_count', 'view_count', 'like_count')
         read_only_fields = ['author', "publish_date", "last_updated","slug"]
         
         # def get_author(self,obj):
