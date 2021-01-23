@@ -9,3 +9,4 @@ urlpatterns = [
     path("<str:slug>/like",like , name="like"),
     # path("create/",Create.as_view(), name="create"),
 ]
+
