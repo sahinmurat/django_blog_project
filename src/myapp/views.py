@@ -19,19 +19,12 @@ from rest_framework.pagination import PageNumberPagination
 @api_view(['GET','POST'])
 @permission_classes([IsAuthenticated])
 def post_list(request):
-    #  paginator = PageNumberPagination()
-    # paginator.page_size = 10
-    # person_objects = Person.objects.all()
-    # result_page = paginator.paginate_queryset(person_objects, request)
-    # serializer = PersonSerializer(result_page, many=True)
-    # return paginator.get_paginated_response(serializer.data)
     paginator = PageNumberPagination()
     paginator.page_size = 1
     if request.method == 'GET':
         posts = Post.objects.all()
         result_page = paginator.paginate_queryset(posts, request)
         serializer = PostSerializer(result_page, many = True)
-        # return Response(serializer.data)
         return paginator.get_paginated_response(serializer.data)
     elif request.method == 'POST':
         serializer = PostSerializer(data = request.data)
