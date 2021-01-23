@@ -5,10 +5,10 @@ from django.core.serializers import serialize
 import json
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
-from .models import Category,Post, Like
+from .models import Category, Comment,Post, Like
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from .serializers import PostSerializer
+from .serializers import PostSerializer, CommentSerializer
 from rest_framework import status
 from rest_framework import generics
 from django.contrib.auth.decorators import login_required
@@ -41,9 +41,19 @@ def post_list(request):
 #     queryset = Post.objects.all()
     
 @permission_classes([IsAuthenticated])
-@api_view(["GET","PUT", "DELETE"])
+@api_view(["GET","PUT", "DELETE","POST"])
 def post_get_update_delete(request, slug):
     post = get_object_or_404(Post, slug=slug)
+    
+    if request.method == "POST":
+        serializer = CommentSerializer(post.comment)
+        if serializer.is_valid():
+            serializer.save(author=request.user)
+            data = {
+                'message': 'Comment is added'
+            }
+            return Response(data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     if request.method == "GET":
         serializer = PostSerializer(post)
         return Response(serializer.data)
@@ -61,7 +71,7 @@ def post_get_update_delete(request, slug):
         return Response(status=status.HTTP_204_NO_CONTENT)
  
  
-@api_view(["GET","PUT", "DELETE"])   
+@api_view(["POST"])   
 def like(request, slug):
     if request.method == "POST":
         obj = get_object_or_404(Post, slug=slug)
@@ -73,5 +83,18 @@ def like(request, slug):
         return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
-
+@permission_classes([IsAuthenticated])
+@api_view(["POST"])
+def add_comment(request, slug):
+    post = get_object_or_404(Post, slug=slug)
+    print(post)
+    print(post.content)
+    if request.method == "POST":
+        serializer = CommentSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save(user =request.user, post= post)
+            data = {
+                'message': 'Comment is added'
+            }
+            return Response(data, status=status.HTTP_201_CREATED)
     
