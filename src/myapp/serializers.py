@@ -1,6 +1,6 @@
 from django.db.models import fields
 from rest_framework import serializers
-from myapp.models import Category, Post
+from myapp.models import Category, Comment, Post
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,6 +18,21 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = (  'id', 'title','content', 'image','category','publish_date', 'last_updated', 'author', 'slug','comment_count', 'view_count', 'like_count')
         read_only_fields = ['author', "publish_date", "last_updated","slug"]
+        
+        
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= Comment
+        fields = ('content',)
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         # def get_author(self,obj):
         #     return obj.get_author_display()
