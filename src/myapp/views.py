@@ -25,7 +25,7 @@ def post_list(request):
     if request.method == 'GET':
         posts = Post.objects.all()
         result_page = paginator.paginate_queryset(posts, request)
-        serializer = PostSerializer(result_page, many = True)
+        serializer = PostSerializer(result_page, many = True, context = {'request': request})
         return paginator.get_paginated_response(serializer.data)
     elif request.method == 'POST':
         serializer = PostSerializer(data = request.data)
@@ -87,8 +87,9 @@ def post_get_post(request, slug):
         return Response(serializer.data)
     
  
-@permission_classes([IsAuthenticated,  IsOwner])
+
 @api_view(["PUT", "DELETE"])
+@permission_classes([IsOwner, IsAuthenticated ])
 def post_put_delete(request, slug):
     post = get_object_or_404(Post, slug=slug)
     
@@ -102,6 +103,10 @@ def post_put_delete(request, slug):
             return Response(data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     if request.method == "DELETE":
+        if request.user != post.author:
+            return Response(
+                {'message': 'noooo'},  status=status.HTTP_403_FORBIDDEN
+            )
         post.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
  
@@ -135,3 +140,20 @@ def like(request, slug):
 #         return Response(status=status.HTTP_400_BAD_REQUEST)
         
     
+
+
+# def model_delete_view(request, pk, *args, **kwargs):
+#     obj = MyModel.objects.filter(pk=pk)
+#     if not obj.exists():
+#         return Response(
+#             {'message': 'MyModel not found'},
+#             status=status.HTTP_404_NOT_FOUND
+#         )
+#     obj = obj.filter(user=request.user)
+#     if not obj.exists():
+#         return Response(
+#             {'message': 'You are not authorizated'},
+#             status=status.HTTP_403_FORBIDDEN
+#         )
+#     obj.delete()
+#     return Response({'message': 'MyModel deleted'}, status=status.HTTP_200_OK)
