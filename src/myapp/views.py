@@ -5,7 +5,7 @@ from django.core.serializers import serialize
 import json
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
-from .models import Category, Comment,Post, Like
+from .models import Category, Comment,Post, Like, PostView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from .serializers import PostSerializer, CommentSerializer
@@ -19,9 +19,9 @@ from .permissions import IsOwner
  
 @api_view(['GET','POST'])
 @permission_classes([IsAuthenticated])
-def post_list(request):
+def list_create(request):
     paginator = PageNumberPagination()
-    paginator.page_size = 1
+    paginator.page_size = 6
     if request.method == 'GET':
         posts = Post.objects.all()
         result_page = paginator.paginate_queryset(posts, request)
@@ -38,43 +38,15 @@ def post_list(request):
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
     
     
-# @permission_classes([IsAuthenticated])
-# @api_view(["GET","PUT", "DELETE","POST"])
-# def post_get_update_delete(request, slug):
-#     post = get_objjhect_or_404(Post, slug=slug)
-    
-#     if request.method == "POST":
-#         serializer = CommentSerializer(post.comment)
-#         if serializer.is_valid():
-#             serializer.save(author=request.user)
-#             data = {
-#                 'message': 'Comment is added'
-#             }
-#             return Response(data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#     if request.method == "GET":
-#         serializer = PostSerializer(post)
-#         return Response(serializer.data)
-#     if request.method == "PUT":
-#         serializer = PostSerializer(post, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             data = {
-#                 "message": "Post updated succesfully!"
-#             }
-#             return Response(data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#     if request.method == "DELETE":
-#         post.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
+
  
 @permission_classes([IsAuthenticated])
 @api_view(["GET","POST"])
-def post_get_post(request, slug):
+def detail_comment(request, slug):
     post = get_object_or_404(Post, slug=slug)
-    
+    PostView.objects.create(author=request.user, post=post)
     if request.method == "POST":
-        serializer = CommentSerializer(data = request.data)
+        serializer = CommentSerializer(data = request.data, many = True)
         if serializer.is_valid():
             serializer.save(author=request.user, post=post)
             data = {
@@ -83,17 +55,21 @@ def post_get_post(request, slug):
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     if request.method == "GET":
-        serializer = PostSerializer(post)
+        serializer = PostSerializer(post,  context = {'request': request})
         return Response(serializer.data)
     
  
 
 @api_view(["PUT", "DELETE"])
 @permission_classes([IsOwner, IsAuthenticated ])
-def post_put_delete(request, slug):
+def update_delete(request, slug):
     post = get_object_or_404(Post, slug=slug)
     
     if request.method == "PUT":
+        if request.user != post.author:
+            return Response(
+                {'message': 'You are not the owner of this post!'},  status=status.HTTP_403_FORBIDDEN
+            )
         serializer = PostSerializer(post, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -105,7 +81,7 @@ def post_put_delete(request, slug):
     if request.method == "DELETE":
         if request.user != post.author:
             return Response(
-                {'message': 'noooo'},  status=status.HTTP_403_FORBIDDEN
+                {'message': 'You are not the owner of this post!'},  status=status.HTTP_403_FORBIDDEN
             )
         post.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -115,12 +91,13 @@ def post_put_delete(request, slug):
 def like(request, slug):
     if request.method == "POST":
         obj = get_object_or_404(Post, slug=slug)
-        like_qs = Like.objects.filter(user=request.user, post=obj)
+        like_qs = Like.objects.filter(author=request.user, post=obj)
         if like_qs:
             like_qs.delete()
+            return Response( {'message': 'Your like  is deleted!'},status=status.HTTP_204_NO_CONTENT)
         else:
-            Like.objects.create(user=request.user, post=obj)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+            Like.objects.create(author=request.user, post=obj)
+            return Response( {'message': 'Your like is succesfully taken!'},status=status.HTTP_204_NO_CONTENT)
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 # @permission_classes([IsAuthenticated])
@@ -157,3 +134,35 @@ def like(request, slug):
 #         )
 #     obj.delete()
 #     return Response({'message': 'MyModel deleted'}, status=status.HTTP_200_OK)
+
+
+
+# @permission_classes([IsAuthenticated])
+# @api_view(["GET","PUT", "DELETE","POST"])
+# def post_get_update_delete(request, slug):
+#     post = get_objjhect_or_404(Post, slug=slug)
+    
+#     if request.method == "POST":
+#         serializer = CommentSerializer(post.comment)
+#         if serializer.is_valid():
+#             serializer.save(author=request.user)
+#             data = {
+#                 'message': 'Comment is added'
+#             }
+#             return Response(data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     if request.method == "GET":
+#         serializer = PostSerializer(post)
+#         return Response(serializer.data)
+#     if request.method == "PUT":
+#         serializer = PostSerializer(post, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             data = {
+#                 "message": "Post updated succesfully!"
+#             }
+#             return Response(data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     if request.method == "DELETE":
+#         post.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
