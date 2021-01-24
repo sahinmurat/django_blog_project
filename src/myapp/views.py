@@ -97,4 +97,6 @@ def add_comment(request, slug):
                 'message': 'Comment is added'
             }
             return Response(data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+        
     
