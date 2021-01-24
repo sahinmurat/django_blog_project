@@ -12,22 +12,29 @@ from .serializers import PostSerializer, CommentSerializer
 from rest_framework import status
 from rest_framework import generics
 from django.contrib.auth.decorators import login_required
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
 from .permissions import IsOwner
 
  
-@api_view(['GET','POST'])
-@permission_classes([IsAuthenticated])
-def list_create(request):
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def list(request):
     paginator = PageNumberPagination()
     paginator.page_size = 6
     if request.method == 'GET':
-        posts = Post.objects.all()
+        posts = Post.objects.filter(status = 'p')
         result_page = paginator.paginate_queryset(posts, request)
         serializer = PostSerializer(result_page, many = True, context = {'request': request})
         return paginator.get_paginated_response(serializer.data)
-    elif request.method == 'POST':
+    
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create(request):
+    paginator = PageNumberPagination()
+    paginator.page_size = 6
+    if request.method == 'POST':
         serializer = PostSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save(author=request.user)

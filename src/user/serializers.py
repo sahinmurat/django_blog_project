@@ -3,6 +3,27 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
+from .models import Profile
+
+
+class UserSerializer(serializers.ModelSerializer):
+    model = User
+    fields = (
+        "username",
+        "email"
+    )
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+
+    class Meta:
+        model = Profile
+        fields = (
+            "user",
+            "image",
+            "bio"
+        )
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
