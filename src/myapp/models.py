@@ -35,13 +35,13 @@ class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
     image = models.URLField(max_length=20000, blank=True)     #  chARFIELD YA DA URL OLARAK KOYACAGIz
-    category = models.CharField(max_length=10, choices=COPTIONS, default='t')
+    category = models.CharField(max_length=20, choices=COPTIONS, default='t')
     # category = models.ForeignKey(
     #     Category, on_delete=models.PROTECT, related_name="cats")
     publish_date = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    status = models.CharField(max_length=10, choices=OPTIONS, default='d')
+    status = models.CharField(max_length=10, choices=OPTIONS, default='p')
     slug = models.SlugField(blank=True, unique=True)  # how-to-learn-django
 
     def __str__(self):

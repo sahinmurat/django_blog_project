@@ -1,6 +1,7 @@
 from django.db.models import fields
 from rest_framework import serializers
 from myapp.models import Category, Comment, Post
+from django.db.models import Q
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,9 +20,10 @@ class PostSerializer(serializers.ModelSerializer):
     category = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
     owner = serializers.SerializerMethodField(read_only = True)
+    has_liked = serializers.SerializerMethodField()
     class Meta:
         model = Post
-        fields = (  'id', 'owner', 'title', 'comments', 'image','category','status','publish_date', 'last_updated', 'author', 'slug','comment_count', 'view_count', 'like_count')
+        fields = (  'id', 'owner', 'title', 'comments', 'has_liked', 'image','category','status','publish_date', 'last_updated', 'author', 'slug','comment_count', 'view_count', 'like_count')
         read_only_fields = ['author', "publish_date", "last_updated","slug"]
         
     def get_category(self, obj):
@@ -34,6 +36,12 @@ class PostSerializer(serializers.ModelSerializer):
         request = self.context['request']
         if request.user.is_authenticated:
             if obj.author == request.user:
+                return True
+            return False
+    def get_has_liked(self, obj):
+        request = self.context['request']
+        if request.user.is_authenticated:
+            if Post.objects.filter(Q(like__author=request.user) & Q(like__post=obj)).exists():
                 return True
             return False
         
