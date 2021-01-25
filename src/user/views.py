@@ -16,7 +16,6 @@ def Profile_get_update(request):
     # profile = get_object_or_404(Profile, user__id=id)
     if request.method == "GET":
         serializer = ProfileSerializer(request.user.profile)
-
         return Response(serializer.data)
 
     if request.method == "PUT":
