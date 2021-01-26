@@ -33,8 +33,8 @@ class Post(models.Model):
         ('o','Other')
     )
     title = models.CharField(max_length=100)
-    content = models.TextField()
-    image = models.URLField(max_length=20000, blank=True)     #  chARFIELD YA DA URL OLARAK KOYACAGIz
+    content = models.TextField(max_length=2000)
+    image = models.URLField(max_length=2000, blank=True)     #  chARFIELD YA DA URL OLARAK KOYACAGIz
     category = models.CharField(max_length=20, choices=COPTIONS, default='t')
     # category = models.ForeignKey(
     #     Category, on_delete=models.PROTECT, related_name="cats")
@@ -42,7 +42,7 @@ class Post(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.CharField(max_length=10, choices=OPTIONS, default='p')
-    slug = models.SlugField(blank=True, unique=True)  # how-to-learn-django
+    slug = models.SlugField(max_length = 50, blank=True, unique=True)  # how-to-learn-django
 
     def __str__(self):
         return self.title
@@ -68,7 +68,7 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     time_stamp = models.DateTimeField(auto_now_add=True)
-    content = models.TextField()
+    content = models.TextField(max_length=2000)
 
     def __str__(self):
         return self.user.username
