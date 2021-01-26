@@ -53,7 +53,7 @@ def detail_comment(request, slug):
     post = get_object_or_404(Post, slug=slug)
     PostView.objects.create(author=request.user, post=post)
     if request.method == "POST":
-        serializer = CommentSerializer(data = request.data, many = True)
+        serializer = CommentSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save(author=request.user, post=post)
             data = {
