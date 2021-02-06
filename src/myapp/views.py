@@ -102,11 +102,21 @@ def like(request, slug):
         like_qs = Like.objects.filter(author=request.user, post=obj)
         if like_qs:
             like_qs.delete()
-            return Response( {'message': 'Your like  is deleted!'},status=status.HTTP_204_NO_CONTENT)
+            data = {
+                'message': 'Your like is deleted'
+            }
+            # return Response( {'message': 'Your like  is deleted!'},status=status.HTTP_204_NO_CONTENT)
+            return Response(data, status=status.HTTP_201_CREATED)
         else:
             Like.objects.create(author=request.user, post=obj)
-            return Response( {'message': 'Your like is succesfully taken!'},status=status.HTTP_204_NO_CONTENT)
+            data = {
+                'message': 'Your like is succesfully taken!'
+            }
+            # return Response( {'message': 'Your like is succesfully taken!'},status=status.HTTP_204_NO_CONTENT)
+            return Response(data, status=status.HTTP_201_CREATED)
+
     return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 # @permission_classes([IsAuthenticated])
 # @api_view(["POST"])
