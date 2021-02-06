@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 def user_directory_path(instance, filename):
     return 'blog/{0}/{1}'.format(instance.author.id, filename)
 
-
+    
 class Category(models.Model):
     name = models.CharField(max_length=100)
 
@@ -18,26 +18,28 @@ class Category(models.Model):
 
 class Post(models.Model):
     OPTIONS = (
-        ('d', 'Draft'),
-        ('p', 'Published')
+        ('Draft', 'Draft'),
+        ('Published', 'Published')
     )
     COPTIONS = (
-        ('s','Sport'),
-        ('p','Politic'),
-        ('so','Social'),
-        ('e','Economy'),
-        ('t','Technology'),
-        ('l','Literature'),
-        ('ed','Education'),
-        ('ph','Philosophy'),
-        ('o','Other')
+        ('Sport','Sport'),
+        ('Politic','Politic'),
+        ('Social','Social'),
+        ('Economy','Economy'),
+        ('Technology','Technology'),
+        ('Literature','Literature'),
+        ('Education','Education'),
+        ('Philosophy','Philosophy'),
+        ('Travel','Travel'),
+        ('Other','Other')
     )
-    title = models.CharField(max_length=100)
-    content = models.TextField(max_length=2000)
-    image = models.URLField(max_length=2000, blank=True)     #  chARFIELD YA DA URL OLARAK KOYACAGIz
-    category = models.CharField(max_length=20, choices=COPTIONS, default='t')
+    title = models.CharField(max_length=1000)
+    content = models.TextField(max_length=20000)
+    image = models.URLField(max_length=5000, blank=True)     #  chARFIELD YA DA URL OLARAK KOYACAGIz
+    category = models.CharField(max_length=20, choices=COPTIONS)
     # category = models.ForeignKey(
     #     Category, on_delete=models.PROTECT, related_name="cats")
+    # category = models.ForeignKey(Category, on_delete = models.CASCADE)
     publish_date = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
