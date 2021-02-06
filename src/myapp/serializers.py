@@ -17,19 +17,19 @@ class CommentSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many= True, read_only = True)
     author = serializers.CharField( source="author.username", read_only=True)
-    category = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField()
+    category_name = serializers.SerializerMethodField()
+    status_name = serializers.SerializerMethodField()
     owner = serializers.SerializerMethodField(read_only = True)
     has_liked = serializers.SerializerMethodField()
     class Meta:
         model = Post
-        fields = (  'id', 'owner', 'title', 'comments', 'has_liked', 'image','category','status','publish_date', 'last_updated', 'author', 'slug','comment_count', 'view_count', 'like_count')
+        fields = (  'id', 'owner', 'title', 'content','comments', 'has_liked', 'image','category','category_name','status','status_name','publish_date', 'last_updated', 'author', 'slug','comment_count', 'view_count', 'like_count')
         read_only_fields = ['author', "publish_date", "last_updated","slug"]
         
-    def get_category(self, obj):
+    def get_category_name(self, obj):
         return obj.get_category_display()
     
-    def get_status(self, obj):
+    def get_status_name(self, obj):
         return obj.get_status_display()
     
     def get_owner(self, obj):

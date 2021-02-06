@@ -21,9 +21,9 @@ from .permissions import IsOwner
 @permission_classes([AllowAny])
 def list(request):
     paginator = PageNumberPagination()
-    paginator.page_size = 6
+    paginator.page_size = 200
     if request.method == 'GET':
-        posts = Post.objects.filter(status = 'p')
+        posts = Post.objects.filter(status = 'Published')
         result_page = paginator.paginate_queryset(posts, request)
         serializer = PostSerializer(result_page, many = True, context = {'request': request})
         return paginator.get_paginated_response(serializer.data)
@@ -33,8 +33,9 @@ def list(request):
 @permission_classes([IsAuthenticated])
 def create(request):
     paginator = PageNumberPagination()
-    paginator.page_size = 6
+    paginator.page_size = 200
     if request.method == 'POST':
+        print(request.data)
         serializer = PostSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save(author=request.user)
