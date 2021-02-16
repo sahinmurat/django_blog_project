@@ -1,6 +1,7 @@
 ### You can follow my project under this link
 ### https://sahinblog.herokuapp.com/
-| use this endpoints:| 
+| use this endpoints:| methods |
+| ------------------------------------------------------------------------------------------------------------------------ | ----------- |
 | list | = with get  method. to get the list of post use get| 
 | create | = with post method you can create a post| 
 | <str:slug>/detail-comment | = with get or post method. to see the detail of a post use get method. to create a comment for this post use post method| 
